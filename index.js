@@ -1,32 +1,25 @@
 // COMP 3133 Exercise 1
-// James Tor¥ - 101049351
+// James Tory - 101049351
 
-const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 const csv = require('csv-parser');
 const fs = require('fs');
-
-const csvStringifier = createCsvStringifier({ 
-  header: [
-    {id:'country', title:'country'},
-    {id:'year', title:'year'},
-    {id:'population', title:'population'}
-  ]
-});
 
 const canWriterStream = fs.createWriteStream('canada.txt');
 const usaWriterStream = fs.createWriteStream('usa.txt');
 
-canWriterStream.write(csvStringifier.getHeaderString());
-usaWriterStream.write(csvStringifier.getHeaderString());
-
 fs.createReadStream('input_countries.csv')
   .pipe(csv())
+  .on('headers', (headers) => {
+    const header = headers.join(',') + '\n'
+    canWriterStream.write(header);
+    usaWriterStream.write(header);
+  })
   .on('data', (row) => {
     if(row.country === 'Canada') {
-      canWriterStream.write(csvStringifier.stringifyRecords([row]))
+      canWriterStream.write(`${row.country},${row.year},${row.population}\n`);
     }
     else if(row.country === 'United States') {
-      usaWriterStream.write(csvStringifier.stringifyRecords([row]))
+      usaWriterStream.write(`${row.country},${row.year},${row.population}\n`);
     }
   })
   .on('end', () => {
