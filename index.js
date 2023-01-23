@@ -4,6 +4,15 @@
 const csv = require('csv-parser');
 const fs = require('fs');
 
+
+if(fs.existsSync('canada.txt')) {
+  fs.unlinkSync('canada.txt');
+}
+
+if(fs.existsSync('usa.txt')) {
+  fs.unlinkSync('usa.txt');
+}
+
 const canWriterStream = fs.createWriteStream('canada.txt');
 const usaWriterStream = fs.createWriteStream('usa.txt');
 
